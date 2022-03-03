@@ -40,6 +40,8 @@ function getJSONObjectForMovieRequirement(req) {
     return json;
 }
 
+
+
 router.post('/signup', function(req, res) {
     if (!req.body.username || !req.body.password) {
         res.json({success: false, msg: 'Please include both username and password to signup.'})
@@ -52,7 +54,7 @@ router.post('/signup', function(req, res) {
         user.save(function(err){
             if (err) {
                 if (err.code == 11000)
-                    return res.json({ success: false, message: 'A user with that username already exists.'});
+                    return res.status(400).json({ success: false, message: 'A user with that username already exists.'});
                 else
                     return res.json(err);
             }
