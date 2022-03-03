@@ -40,7 +40,10 @@ function getJSONObjectForMovieRequirement(req) {
     return json;
 }
 
-
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+});
 
 router.post('/signup', function(req, res) {
     if (!req.body.username || !req.body.password) {
