@@ -12,6 +12,7 @@ var authJwtController = require('./auth_jwt');
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
 var User = require('./Users');
+var Movie = require('./Movies');
 
 var app = express();
 app.use(cors());
@@ -24,21 +25,34 @@ var router = express.Router();
 
 function getJSONObjectForMovieRequirement(req) {
     var json = {
-        headers: "No headers",
+        status: "No status",
+        msg: "No Msg",
+        headers : "No Headers", // if no headers, returns this
+        query: "No Query",
         key: process.env.UNIQUE_KEY,
-        body: "No body"
+        body : "No Body" // if no body, returns this
     };
 
-    if (req.body != null) {
+    if (req.body != null) { // getting body if not null
         json.body = req.body;
     }
-
-    if (req.headers != null) {
+    if (req.headers != null) { // getting header if not null
         json.headers = req.headers;
     }
 
-    return json;
+    return json; // returning the object
 }
+
+const includedMethods = ['PUT', 'POST', 'DELETE', 'GET'];
+
+// using middleware in order to handle only the methods we have included
+router.use((req, res, next) => {
+    if (includedMethods.indexOf(req.method) == -1) {
+        res.send("Error: HTTP method not supported!");
+        return;
+    }
+    next();
+});
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -89,6 +103,80 @@ router.post('/signin', function (req, res) {
         })
     })
 });
+
+router.route('/movies')
+    .delete(authController.isAuthenticated, function(req, res){
+            console.log(req.body);
+            res.status(200);
+            if(req.get('Content-Type')) {
+                res = res.type(req.get('Content-Type'));
+            }
+            var o = getJSONObjectForMovieRequirement(req);
+            o.status = 200;
+            o.msg = "Movie Deleted";
+            o.query = req.query;
+            res.json(o);
+        }
+    )
+    .put(authJwtController.isAuthenticated, function(req, res){
+            console.log(req.body);
+            res.status(200);
+            if(req.get('Content-Type')) {
+                res = res.type(req.get('Content-Type'));
+            }
+            var o = getJSONObjectForMovieRequirement(req);
+            o.status = 200;
+            o.msg = "Movie Updated";
+            o.query = req.query;
+            res.json(o);
+        }
+    )
+    .get(function(req, res){ // in GET, we want to return all movies in the collection
+           res.send.json(Movie.find({}));
+        }
+    )
+    .post(function(req, res) { // in POST, we want to save a single movie
+            let newMovie = new Movie();
+            newMovie.title = req.body.title;
+            newMovie.year = req.body.year;
+            newMovie.genre = req.body.genre;
+            newMovie.actors = req.body.actors;
+
+            if(newMovie.title === "" || newMovie.year === "" || newMovie.genre === "" ||
+                newMovie.actors === ""){
+                return res.status(400).send({success: false, msg: "Cannot save a new movie object that does not have all required fields."});
+            }
+            else{
+                newMovie.save(function(err){
+                    if(err) {
+                        if (err.code == 11000)
+                            return res.status(400).json({success: false, message: 'This movie already exists!'});
+                        else
+                            return res.json(err);
+                    }
+                    return res.status(200).json({success: true, msg: 'Successfully saved new movie.'});
+                });
+            }
+        }
+    );
+
+// rejecting requests made to the base url
+router.get('/', function (req, res){
+        res.send("Invaild path. Page not found.")
+    }
+);
+router.post('/', function (req, res){
+        res.send("Invaild path. Page not found.")
+    }
+);
+router.put('/', function (req, res){
+        res.send("Invaild path. Page not found.")
+    }
+);
+router.delete('/', function (req, res){
+        res.send("Invaild path. Page not found.")
+    }
+);
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
