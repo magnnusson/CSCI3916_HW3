@@ -131,7 +131,7 @@ router.route('/movies')
             res.json(o);
         }
     )
-    .get(function(req, res){ // in GET, we want to return all movies in the collection
+    .get(authJwtController.isAuthenticated, function(req, res){ // in GET, we want to return all movies in the collection
            Movie.find({}, (err, movies) => {
                if(err)
                    return res.status(400).json(err);
@@ -140,7 +140,7 @@ router.route('/movies')
            })
         }
     )
-    .post(function(req, res) { // in POST, we want to save a single movie
+    .post(authJwtController.isAuthenticated,function(req, res) { // in POST, we want to save a single movie
             let newMovie = new Movie();
             newMovie.title = req.body.title;
             newMovie.year = req.body.year;
