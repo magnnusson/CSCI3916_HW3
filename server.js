@@ -108,10 +108,11 @@ router.post('/signin', function (req, res) {
 });
 
 
-/*router.route('/movies/*')
+router.route('/movies/:movieparameter')
     .get(authJwtController.isAuthenticated, function(req, res){
+        res.send(req.params);
 
-    })*/
+    })
 
 router.route('/movies')
     .delete(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies DELETE
@@ -138,9 +139,12 @@ router.route('/movies')
             newMovie.genre = req.body.genre;
             newMovie.actors = req.body.actors;
 
-            if(newMovie.title === "" || newMovie.year === "" || newMovie.genre === "" ||
+            if(newMovie.title === "" || newMovie.year === "" || newMovie.genre === "" || // error checking
                 newMovie.actors === ""){
                 return res.status(400).send({success: false, msg: "Cannot save a new movie object that does not have all required fields."});
+            }
+            else if(newMovie.actors.length < 3){
+                return res.status(400).send({success: false, msg: "Cannot save a new movie object without at least 3 actors."})
             }
             else{
                 newMovie.save(function(err){
