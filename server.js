@@ -110,12 +110,12 @@ router.post('/signin', function (req, res) {
 
 router.route('/movies/:movieparameter')
     .get(authJwtController.isAuthenticated, function(req, res){
-        Movie.findOne({title: req.params}, function(err, movie){
+        Movie.findOne({title: req.params.toString()}, function(err, movie){
             if(err) {
                return res.status(400).json(err);
             }
             else{
-                res.status(200).json(movie);
+                return res.status(200).json(movie);
             }
         })
     })
