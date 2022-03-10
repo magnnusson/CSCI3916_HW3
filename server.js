@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 
     User.findOne({ username: userNew.username }).select('name username password').exec(function(err, user) {
         if (err) {
-            res.send(err);
+            res.json(err);
         }
 
         user.comparePassword(userNew.password, function(isMatch) {
@@ -105,30 +105,12 @@ router.post('/signin', function (req, res) {
 });
 
 router.route('/movies')
-    .delete(authController.isAuthenticated, function(req, res){
-            console.log(req.body);
-            res.status(200);
-            if(req.get('Content-Type')) {
-                res = res.type(req.get('Content-Type'));
-            }
-            var o = getJSONObjectForMovieRequirement(req);
-            o.status = 200;
-            o.msg = "Movie Deleted";
-            o.query = req.query;
-            res.json(o);
+    .delete(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies DELETE
+            return res.status(400);
         }
     )
-    .put(authJwtController.isAuthenticated, function(req, res){
-            console.log(req.body);
-            res.status(200);
-            if(req.get('Content-Type')) {
-                res = res.type(req.get('Content-Type'));
-            }
-            var o = getJSONObjectForMovieRequirement(req);
-            o.status = 200;
-            o.msg = "Movie Updated";
-            o.query = req.query;
-            res.json(o);
+    .put(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies PUT
+            return res.status(400);
         }
     )
     .get(authJwtController.isAuthenticated, function(req, res){ // in GET, we want to return all movies in the collection
@@ -164,6 +146,8 @@ router.route('/movies')
             }
         }
     );
+
+router.route(/movies/)
 
 // rejecting requests made to the base url
 router.get('/', function (req, res){
