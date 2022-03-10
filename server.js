@@ -110,8 +110,14 @@ router.post('/signin', function (req, res) {
 
 router.route('/movies/:movieparameter')
     .get(authJwtController.isAuthenticated, function(req, res){
-        res.send(req.params);
-
+        Movie.findOne({title: req.params}).select('title year genre actors').exec(function(err, movie){
+            if(err) {
+               return res.status(400).json(err);
+            }
+            else{
+                res.status(200).json(movie);
+            }
+        })
     })
 
 router.route('/movies')
