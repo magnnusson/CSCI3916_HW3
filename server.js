@@ -88,7 +88,10 @@ router.post('/signin', function (req, res) {
 
     User.findOne({ username: userNew.username }).select('name username password').exec(function(err, user) {
         if (err) {
-            return res.json(err);
+            res.send(err);
+        }
+        else if(!userNew.username || !userNew.password || !user){
+            return res.status(401).send({success: false, msg: 'Authentication failed.'});
         }
 
         user.comparePassword(userNew.password, function(isMatch) {
