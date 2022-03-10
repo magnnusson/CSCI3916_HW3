@@ -132,7 +132,7 @@ router.route('/movies')
         }
     )
     .get(function(req, res){ // in GET, we want to return all movies in the collection
-           res.send(Movie.find({}));
+           res.json(Movie.find({}));
         }
     )
     .post(function(req, res) { // in POST, we want to save a single movie
