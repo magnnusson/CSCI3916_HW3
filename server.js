@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 
     User.findOne({ username: userNew.username }).select('name username password').exec(function(err, user) {
         if (err) {
-            res.json(err);
+            return res.json(err);
         }
 
         user.comparePassword(userNew.password, function(isMatch) {
@@ -103,6 +103,12 @@ router.post('/signin', function (req, res) {
         })
     })
 });
+
+
+/*router.route('/movies/*')
+    .get(authJwtController.isAuthenticated, function(req, res){
+
+    })*/
 
 router.route('/movies')
     .delete(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies DELETE
@@ -147,7 +153,7 @@ router.route('/movies')
         }
     );
 
-router.route(/movies/)
+
 
 // rejecting requests made to the base url
 router.get('/', function (req, res){
