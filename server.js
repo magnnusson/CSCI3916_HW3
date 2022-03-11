@@ -109,7 +109,7 @@ router.post('/signin', function (req, res) {
 
 
 router.route('/movies/*')
-    .get(authJwtController.isAuthenticated, function(req, res){
+    .get(authJwtController.isAuthenticated, function(req, res){ // on GET, get the specific movie based off the param
         Movie.findOne({title: req.params['0']}, function(err, movie){
             if(err) {
                return res.status(400).json(err);
@@ -118,6 +118,20 @@ router.route('/movies/*')
                 return res.status(200).json(movie);
             }
         })
+    })
+    .post(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies/movieparameter POST
+        return res.status(400);
+    })
+    .put(authJwtController.isAuthenticated, function(req, res){
+        let update = req.body;
+        Movie.findOneAndUpdate({title: req.params['0']}, {update}, {new: true}, function(err, data){
+            if(err){
+                return res.status(400).json(err);
+            }
+            else{
+                return res.status(200).json(data);
+            }
+        });
     })
 
 router.route('/movies')
