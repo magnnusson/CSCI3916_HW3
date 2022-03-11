@@ -131,16 +131,16 @@ router.route('/movies/*')
         })
     })
     .post(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies/movieparameter POST
-        return res.status(400);
+        return res.status(400).send({success: false, msg: 'POST Denied on /movieparameter'});
     })
 
 router.route('/movies')
     .delete(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies DELETE
-            return res.status(400);
+        return res.status(400).send({success: false, msg: 'DELETE Denied on /movies'});
         }
     )
     .put(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies PUT
-            return res.status(400);
+        return res.status(400).send({success: false, msg: 'PUT Denied on /movies'});
         }
     )
     .get(authJwtController.isAuthenticated, function(req, res){ // in GET, we want to return all movies in the collection
