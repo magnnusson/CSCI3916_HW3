@@ -119,9 +119,6 @@ router.route('/movies/*')
             }
         })
     })
-    .post(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies/movieparameter POST
-        return res.status(400);
-    })
     .put(authJwtController.isAuthenticated, function(req, res){
         let update = req.body;
         Movie.findOneAndUpdate({title: req.params['0']}, update, {new: true}, function(err, data){
@@ -131,7 +128,10 @@ router.route('/movies/*')
             else{
                 return res.status(200).json(data);
             }
-        });
+        })
+    })
+    .post(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies/movieparameter POST
+        return res.status(400);
     })
 
 router.route('/movies')
