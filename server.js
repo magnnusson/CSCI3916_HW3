@@ -124,7 +124,7 @@ router.route('/movies/*')
     })
     .put(authJwtController.isAuthenticated, function(req, res){
         let update = req.body;
-        Movie.findOneAndUpdate({title: req.params['0']}, {update}, {new: true}, function(err, data){
+        Movie.findOneAndUpdate({title: req.params['0']}, update, {new: true}, function(err, data){
             if(err){
                 return res.status(400).json(err);
             }
