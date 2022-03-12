@@ -133,6 +133,18 @@ router.route('/movies/*')
     .post(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies/movieparameter POST
         return res.status(400).send({success: false, msg: 'POST Denied on /movieparameter'});
     })
+    .delete(authJwtController.isAuthenticated, function(req, res){ // for DELETE, delete a movie
+        let deleteMovie = req.body;
+        Movie.deleteOne(deleteMovie, null, function(err, data){
+            if(err){
+                return res.status(400).json(err);
+            }
+            else{
+                return res.status(200).json(data);
+            }
+        });
+    })
+
 
 router.route('/movies')
     .delete(authJwtController.isAuthenticated, function(req, res){ // fail on the /movies DELETE
