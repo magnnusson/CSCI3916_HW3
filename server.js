@@ -139,7 +139,7 @@ router.route('/movies/*')
                 return res.status(400).json(err);
             }
             else{
-                return res.status(200).json(data);
+                return res.status(200).json({success: true, msg: 'Movie is deleted!'});
             }
         });
     })
