@@ -134,8 +134,7 @@ router.route('/movies/*')
         return res.status(400).send({success: false, msg: 'POST Denied on /movieparameter'});
     })
     .delete(authJwtController.isAuthenticated, function(req, res){ // for DELETE, delete a movie
-        let deleteMovie = req.params['0'];
-        Movie.deleteOne(deleteMovie, null, function(err, data){
+        Movie.deleteOne({title: req.params['0']}, null, function(err, data){
             if(err){
                 return res.status(400).json(err);
             }
